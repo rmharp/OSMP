@@ -172,9 +172,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Contact
 
-- **Author**: *Your Name*
-- **Email**: *your.email@example.com*
-- **GitHub**: [your-username](https://github.com/your-username)
+- **Author**: *Riley Harper
+- **Email**: *riley.harper@unc.edu*
+- **GitHub**: [rmharp](https://github.com/rmharp)
 
 ## Acknowledgments
 
