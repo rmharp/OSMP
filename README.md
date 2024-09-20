@@ -24,13 +24,13 @@ This repository contains R code that implements an assignment algorithm to solve
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/rmharp/SMP.git
+   git clone https://github.com/rmharp/OSMP.git
    ```
 
 2. **Navigate to the Project Directory**
 
    ```bash
-   cd SMP
+   cd OSMP
    ```
 
 3. **Set Up the Data Directory**
