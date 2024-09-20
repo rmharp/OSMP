@@ -1,0 +1,125 @@
+---
+title: "One-Sided Matching Problem with Randomized Member Order"
+output: html_document
+date: "`r Sys.Date()`"
+---
+
+```{r}
+### generates fictitious members and project for illustration
+set.seed(123)
+
+# number of random members and projects
+n_members <- 150
+n_projects <- 16
+
+# generate random member names
+first_names <- c("Alex", "Bailey", "Cameron", "Dana", "Elliott", "Finley", "Gabriel", "Harper", "Jamie", "Kendall", "Logan", "Morgan", "Parker", "Quinn", "Riley", "Sawyer", "Taylor", "Jordan", "Casey", "Drew")
+last_names <- c("Smith", "Johnson", "Williams", "Brown", "Jones", "Miller", "Davis", "Garcia", "Wilson", "Anderson", "Thomas", "Taylor", "Moore", "Jackson", "Martin", "Lee", "Perez", "Thompson", "White", "Harris")
+member_names <- paste(sample(first_names, n_members, replace = TRUE), sample(last_names, n_members, replace = TRUE))
+
+# generate project preferences for each member
+preferences <- t(sapply(1:n_members, function(x) sample(1:n_projects, n_projects)))
+member_preferences <- data.frame(Member = member_names, preferences)
+
+# name preference columns
+colnames(member_preferences) <- c("Member", paste0("Preference", 1:n_projects))
+
+# write data to a csv
+write.csv(member_preferences, "./data/member_preferences.csv", row.names = FALSE)
+
+#  display data
+#write.table(member_preferences, file = "", sep = ",", row.names = FALSE, col.names = TRUE, quote = FALSE)
+```
+
+```{r}
+### implementation of Gale-Shapley algorithm
+set.seed(123)
+
+deterministic <- FALSE
+
+member_preferences <- read.csv("./data/member_preferences.csv", stringsAsFactors = FALSE)
+
+# total number of members and projects
+n_members <- nrow(member_preferences)
+n_projects <- ncol(member_preferences) - 1
+
+# random project capacities
+project_capacities <- c(5, 3, 4, 5, 3, 5, 3, 4, 5, 5, 5, 5, 4, 5, 3, 3)
+project_names <- paste("Project", 1:n_projects)
+
+# project data frame
+projects <- data.frame(Project = project_names, Capacity = project_capacities, Assigned_Members = 0)
+
+# initialize assignments
+assignments <- data.frame(Member = member_preferences$Member, Project = NA)
+
+# convert member preferences to a list
+member_prefs <- split(as.matrix(member_preferences[ , -1]), seq(n_members))
+
+# init list to track which project each member has proposed to
+proposals <- vector("list", n_members)
+for (i in 1:n_members) {
+  proposals[[i]] <- 1  # start with top preference
+}
+
+if (deterministic == FALSE) {
+  # shuffle the order of members to create a random queue of free members
+  free_members <- sample(1:n_members, n_members, replace = FALSE)
+} else {
+  # create a queue of free members
+  free_members <- 1:n_members
+}
+
+# matching process using Gale-Shapley algorithm
+while (length(free_members) > 0) {
+  member_id <- free_members[1]
+  
+  # get the member's current preference
+  preference_rank <- proposals[[member_id]]
+  
+  # check if the member has exhausted all preferences
+  if (preference_rank > n_projects) {
+    # member remains unassigned
+    assignments$Project[member_id] <- "Unassigned"
+    free_members <- free_members[-1]
+    next
+  }
+  
+  # member proposes to their next preferred project
+  preferred_project <- member_prefs[[member_id]][preference_rank]
+  project_index <- preferred_project
+  project_name <- projects$Project[project_index]
+  
+  # check if the project has capacity
+  if (projects$Assigned_Members[project_index] < projects$Capacity[project_index]) {
+    # assign member to project
+    assignments$Project[member_id] <- project_name
+    projects$Assigned_Members[project_index] <- projects$Assigned_Members[project_index] + 1
+    # remove member from free members
+    free_members <- free_members[-1]
+  } else {
+    # project is full, member moves to next preference
+    proposals[[member_id]] <- proposals[[member_id]] + 1
+  }
+}
+
+# print project assignment summary
+cat("\nProject Assignment Summary:\n")
+for (i in 1:n_projects) {
+  cat(projects$Project[i], ": ", 
+      projects$Assigned_Members[i], 
+      "/", 
+      projects$Capacity[i], 
+      "members assigned\n")
+}
+
+# count how many members remain unassigned
+unassigned_count <- sum(assignments$Project == "Unassigned")
+cat("\nNumber of unassigned members: ", unassigned_count, "\n")
+
+# save assignments to csv
+write.csv(assignments, "./data/assignments_output.csv", row.names = FALSE)
+
+#  display assignments
+#write.table(assignments, file = "", sep = ",", row.names = FALSE, col.names = TRUE, quote = FALSE)
+```
