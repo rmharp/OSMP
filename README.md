@@ -172,7 +172,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Contact
 
-- **Author**: *Riley Harper
+- **Author**: *Riley Harper*
 - **Email**: *riley.harper@unc.edu*
 - **GitHub**: [rmharp](https://github.com/rmharp)
 
