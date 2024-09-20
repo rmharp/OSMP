@@ -66,7 +66,7 @@ This repository contains R code that implements an assignment algorithm to solve
 
 ## Project Structure
 
-- `One_Sided_Matching_Problem.Rmd`: Main RMarkdown file containing the code.
+- `OSMP.Rmd`: Main RMarkdown file containing the code.
 - `data/`: Directory containing input and output CSV files.
   - `member_preferences.csv`: Generated member preferences.
   - `assignments_output.csv`: Resulting assignments after running the algorithm.
